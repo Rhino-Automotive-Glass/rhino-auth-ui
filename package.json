@@ -46,7 +46,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rhino-Automotive-Glass/auth-ui.git"
+    "url": "git+https://github.com/Rhino-Automotive-Glass/auth-ui.git"
   },
   "license": "UNLICENSED"
 }
