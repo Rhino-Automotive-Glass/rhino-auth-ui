@@ -31,15 +31,16 @@ npm login --registry=https://npm.pkg.github.com
 npm install @rhino-automotive-glass/auth-ui
 ```
 
-### 4. Import the styles
+### 4. Configure Tailwind to scan the package
 
-Add this import once in your app (e.g. in your root layout or global CSS file):
+Add this `@source` directive to your app's global CSS file (e.g. `globals.css`) so Tailwind generates the utility classes used by the components:
 
-```ts
-import '@rhino-automotive-glass/auth-ui/styles.css'
+```css
+@import "tailwindcss";
+@source "../../node_modules/@rhino-automotive-glass/auth-ui/dist";
 ```
 
-This ships a pre-compiled CSS file with all the Tailwind utilities the components use. No Tailwind config changes needed in your app.
+Without this, Tailwind won't scan `node_modules` and the component styles won't be applied.
 
 ## Peer dependencies
 

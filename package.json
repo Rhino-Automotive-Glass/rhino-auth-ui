@@ -12,14 +12,13 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs.js"
-    },
-    "./styles.css": "./dist/styles.css"
+    }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "vite build && npx @tailwindcss/cli -i src/styles.css -o dist/styles.css --minify",
+    "build": "vite build",
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
@@ -32,13 +31,11 @@
   "devDependencies": {
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.12",
-    "@tailwindcss/cli": "^4.2.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwindcss": "^4.2.1",
     "typescript": "^5.7.2",
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.3.0"
