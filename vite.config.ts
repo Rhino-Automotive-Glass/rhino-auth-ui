@@ -23,6 +23,7 @@ export default defineConfig({
         'react-dom',
         'react/jsx-runtime',
         'next',
+        'next/image',
         'next/navigation',
         '@supabase/supabase-js',
         '@supabase/ssr',
