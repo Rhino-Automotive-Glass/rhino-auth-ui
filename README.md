@@ -2,7 +2,7 @@
 
 Reusable Supabase email + password authentication forms for Rhino Automotive Glass Next.js apps.
 
-Provides **LoginForm**, **SignupForm**, and **ForgotPasswordForm** — styled with Tailwind CSS, built for the App Router (`'use client'` components).
+Provides **AuthLayout**, **LoginForm**, **SignupForm**, and **ForgotPasswordForm** — styled with Tailwind CSS, built for the App Router (`'use client'` components).
 
 ## Installation
 
@@ -30,6 +30,16 @@ npm login --registry=https://npm.pkg.github.com
 ```bash
 npm install @rhino-automotive-glass/auth-ui
 ```
+
+### 4. Import the styles
+
+Add this import once in your app (e.g. in your root layout or global CSS file):
+
+```ts
+import '@rhino-automotive-glass/auth-ui/styles.css'
+```
+
+This ships a pre-compiled CSS file with all the Tailwind utilities the components use. No Tailwind config changes needed in your app.
 
 ## Peer dependencies
 
@@ -64,6 +74,33 @@ export function createClient() {
 
 Your app also needs an `/auth/callback` route to handle email confirmation code exchange. See the [Supabase SSR docs](https://supabase.com/docs/guides/auth/server-side/nextjs) for the full setup.
 
+### AuthLayout
+
+A full-screen layout with a background image, gradient overlay, and a centered card. Wrap your auth pages with it:
+
+```tsx
+import { AuthLayout } from '@rhino-automotive-glass/auth-ui'
+
+export default function AuthRootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <AuthLayout
+      backgroundImage="/your-background.webp"
+      backgroundAlt="Company background"
+      title="My App"
+      subtitle="Welcome back"
+    >
+      {children}
+    </AuthLayout>
+  )
+}
+```
+
+The background image must exist in your app's `public/` directory.
+
 ### Login page
 
 ```tsx
@@ -76,13 +113,11 @@ export default function LoginPage() {
   const supabase = createClient()
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <LoginForm
-        supabase={supabase}
-        redirectTo="/dashboard"
-        onSuccess={() => console.log('Logged in!')}
-      />
-    </div>
+    <LoginForm
+      supabase={supabase}
+      redirectTo="/dashboard"
+      onSuccess={() => console.log('Logged in!')}
+    />
   )
 }
 ```
@@ -98,11 +133,7 @@ import { SignupForm } from '@rhino-automotive-glass/auth-ui'
 export default function SignupPage() {
   const supabase = createClient()
 
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <SignupForm supabase={supabase} />
-    </div>
-  )
+  return <SignupForm supabase={supabase} />
 }
 ```
 
@@ -117,17 +148,87 @@ import { ForgotPasswordForm } from '@rhino-automotive-glass/auth-ui'
 export default function ForgotPasswordPage() {
   const supabase = createClient()
 
+  return <ForgotPasswordForm supabase={supabase} />
+}
+```
+
+### Full example (layout + login)
+
+```tsx
+// app/(auth)/layout.tsx
+import { AuthLayout } from '@rhino-automotive-glass/auth-ui'
+
+export default function AuthRootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <ForgotPasswordForm supabase={supabase} />
+    <AuthLayout
+      backgroundImage="/parabrisas-medallones-van-camioneta-autobuses.webp"
+      backgroundAlt="Rhino Automotive Glass"
+      title="Rhino Stock"
+      subtitle="Sistema de Inventario"
+    >
+      {children}
+    </AuthLayout>
+  )
+}
+```
+
+```tsx
+// app/(auth)/login/page.tsx
+'use client'
+
+import { createClient } from '@/utils/supabase/client'
+import { LoginForm } from '@rhino-automotive-glass/auth-ui'
+
+export default function LoginPage() {
+  const supabase = createClient()
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">Bienvenido</h2>
+        <p className="text-sm text-slate-600">
+          Inicia sesión para acceder al sistema
+        </p>
+      </div>
+      <LoginForm supabase={supabase} redirectTo="/" />
     </div>
   )
 }
 ```
 
+## Exports
+
+```ts
+import {
+  AuthLayout,
+  LoginForm,
+  SignupForm,
+  ForgotPasswordForm,
+} from '@rhino-automotive-glass/auth-ui'
+
+import type {
+  AuthLayoutProps,
+  AuthFormProps,
+} from '@rhino-automotive-glass/auth-ui'
+```
+
 ## Props
 
-All forms accept:
+### AuthLayout
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `backgroundImage` | `string` | **required** | Path to background image in your `public/` dir |
+| `backgroundAlt` | `string` | `''` | Alt text for the background image |
+| `title` | `string` | **required** | Large heading above the card |
+| `subtitle` | `string` | — | Subtitle below the heading |
+| `children` | `ReactNode` | **required** | Content rendered inside the card |
+
+### LoginForm / SignupForm / ForgotPasswordForm
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
