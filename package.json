@@ -51,5 +51,8 @@
     "type": "git",
     "url": "git+https://github.com/Rhino-Automotive-Glass/auth-ui.git"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "overrides": {
+    "minimatch": ">=10.2.3"
+  }
 }
