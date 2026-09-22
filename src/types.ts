@@ -4,9 +4,8 @@ export interface AuthFormProps {
   /** Supabase browser client instance from consuming app */
   supabase: SupabaseClient
   /**
-   * URL to redirect to after auth action completes.
-   * Defaults to `${window.location.origin}/auth/callback`.
-   * Must be added to your Supabase project's Redirect URLs allow list.
+   * Login destination or explicit email callback URL, depending on the form.
+   * Email callback URLs must be allowed by the Supabase project's Redirect URLs.
    */
   redirectTo?: string
   /** Called after a successful auth action */

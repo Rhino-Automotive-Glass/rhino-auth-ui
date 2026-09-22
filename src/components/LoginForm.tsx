@@ -44,7 +44,6 @@ export function LoginForm({
     <form
       onSubmit={handleSubmit}
       className={`space-y-5 w-full max-w-sm ${className}`}
-      noValidate
     >
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 border border-red-200 p-3 flex items-start gap-2">

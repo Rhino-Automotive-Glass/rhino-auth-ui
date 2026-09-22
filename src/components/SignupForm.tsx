@@ -3,17 +3,24 @@
 import { useState, type FormEvent } from 'react'
 import type { AuthFormProps } from '../types'
 
+export interface SignupFormProps extends AuthFormProps {
+  /** Minimum accepted password length. Match the consuming project's Auth policy. */
+  minLength?: number
+}
+
 export function SignupForm({
   supabase,
   redirectTo,
   onSuccess,
   className = '',
-}: AuthFormProps) {
+  minLength = 8,
+}: SignupFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [confirmationRequired, setConfirmationRequired] = useState(true)
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
@@ -21,8 +28,8 @@ export function SignupForm({
     setError(null)
 
     // Client-side validation
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.')
+    if (password.length < minLength) {
+      setError(`Password must be at least ${minLength} characters.`)
       return
     }
     if (password !== confirmPassword) {
@@ -37,7 +44,7 @@ export function SignupForm({
     const emailRedirectTo =
       redirectTo ?? `${window.location.origin}/auth/callback`
 
-    const { error: authError } = await supabase.auth.signUp({
+    const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -52,7 +59,7 @@ export function SignupForm({
       return
     }
 
-    // Supabase sends a confirmation email — show success message
+    setConfirmationRequired(!data.session)
     setSuccess(true)
     onSuccess?.()
   }
@@ -61,7 +68,9 @@ export function SignupForm({
     return (
       <div className={`w-full max-w-sm ${className}`}>
         <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
-          Check your email for a confirmation link to complete your signup.
+          {confirmationRequired
+            ? 'Check your email for a confirmation link to complete your signup.'
+            : 'Your account is ready. You can continue.'}
         </p>
       </div>
     )
@@ -71,7 +80,6 @@ export function SignupForm({
     <form
       onSubmit={handleSubmit}
       className={`space-y-5 w-full max-w-sm ${className}`}
-      noValidate
     >
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 border border-red-200 p-3 flex items-start gap-2">
@@ -121,7 +129,6 @@ export function SignupForm({
           type="password"
           required
           autoComplete="new-password"
-          minLength={6}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
