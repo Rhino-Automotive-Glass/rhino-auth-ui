@@ -3,14 +3,20 @@
 import { useState, type FormEvent } from 'react'
 import type { AuthFormProps } from '../types'
 
-/** ForgotPasswordForm only needs supabase, redirectTo, onSuccess, and className */
-type ForgotPasswordFormProps = Omit<AuthFormProps, never>
+export interface ForgotPasswordFormProps extends AuthFormProps {
+  /**
+   * App route that renders UpdatePasswordForm after PKCE recovery.
+   * When set, it is passed to `/auth/callback` as the `next` query parameter.
+   */
+  resetPath?: string
+}
 
 export function ForgotPasswordForm({
   supabase,
   redirectTo,
   onSuccess,
   className = '',
+  resetPath,
 }: ForgotPasswordFormProps) {
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -24,8 +30,9 @@ export function ForgotPasswordForm({
 
     // Always pass redirectTo explicitly — required for multi-deployment setups.
     // The user will be sent to this URL after clicking the reset link in their email.
-    const emailRedirectTo =
-      redirectTo ?? `${window.location.origin}/auth/callback`
+    const callbackUrl = new URL('/auth/callback', window.location.origin)
+    if (resetPath) callbackUrl.searchParams.set('next', resetPath)
+    const emailRedirectTo = redirectTo ?? callbackUrl.toString()
 
     const { error: authError } = await supabase.auth.resetPasswordForEmail(
       email,
@@ -58,7 +65,6 @@ export function ForgotPasswordForm({
     <form
       onSubmit={handleSubmit}
       className={`space-y-5 w-full max-w-sm ${className}`}
-      noValidate
     >
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 border border-red-200 p-3 flex items-start gap-2">
